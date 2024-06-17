@@ -3,6 +3,16 @@ const searchButton = document.getElementById("searchButton");
 const userDetails = document.getElementById("user-details");
 const repositoriesList = document.getElementById("repositories-list");
 
+const formatNumber = (num) => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + "M";
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(1) + "k";
+  } else {
+    return num.toString();
+  }
+};
+
 searchButton.addEventListener("click", async () => {
   const username = userNameInput.value.trim();
   console.log(`User Entered username: ${username}`);
@@ -22,10 +32,10 @@ searchButton.addEventListener("click", async () => {
       userDetails.innerHTML = `
         Username: ${userData.login} <br>
         Name: ${userData.name} <br> 
-        Bio: ${userData.bio}
+        Bio: ${userData.bio} <br>
         Public Repos: ${userData.public_repos} <br>
-        Followers: ${userData.followers} <br>
-        Following: ${userData.following} <br>
+        Followers: ${formatNumber(userData.followers)} <br>
+        Following: ${formatNumber(userData.following)} <br>
       `;
 
       const repoResponse = await fetch(
