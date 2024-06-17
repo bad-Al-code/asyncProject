@@ -37,6 +37,8 @@ searchButton.addEventListener("click", async () => {
         // chatGPT: https://chatgpt.com/share/b74cccf3-1b7f-4b50-b7cd-dd267e1999be
         const topFiveRepos = userRepos.slice(0, 5);
         console.log(topFiveRepos);
+
+        repositoriesList.innerHTML = "";
         topFiveRepos.forEach((repo) => {
           const listItem = document.createElement("li");
           console.log(repo.html_url);
