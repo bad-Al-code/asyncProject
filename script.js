@@ -4,7 +4,7 @@ const userInfo = document.getElementById("user-info");
 
 searchButton.addEventListener("click", async () => {
   const username = userNameInput.value.trim();
-  console.log(username);
+  console.log('User Entered username: ', ${username});
 
   if (!username) {
     userInfo.textContent = "Please enter a username";
@@ -12,17 +12,17 @@ searchButton.addEventListener("click", async () => {
 
   try {
     const response = await fetch(`https://api.github.com/users/${username}`);
-    console.log(response.status); // get either response.status || response.ok
+    console.log(`API response status: ${response.status}`); // get either response.status || response.ok
 
     if (response.status === 200) {
       const userData = await response.json();
-      console.log(userData);
+      console.log("User Data: ", userData);
       userInfo.textContent = `Username: ${userData.login}`;
     } else {
       userInfo.textContent = "User not found";
     }
   } catch (error) {
     console.error("Error fetching user data: ", error);
-    // TODO: display something in ui
+    userInfo.textContent = "Something went wrong. Please try again later";
   }
 });
