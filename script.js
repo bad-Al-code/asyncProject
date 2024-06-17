@@ -23,6 +23,9 @@ searchButton.addEventListener("click", async () => {
         Username: ${userData.login} <br>
         Name: ${userData.name} <br> 
         Bio: ${userData.bio}
+        Public Repos: ${userData.public_repos} <br>
+        Followers: ${userData.followers} <br>
+        Following: ${userData.following} <br>
       `;
 
       const repoResponse = await fetch(
