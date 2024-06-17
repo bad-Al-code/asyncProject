@@ -25,7 +25,6 @@ searchButton.addEventListener("click", async () => {
   try {
     const response = await fetch(`https://api.github.com/users/${username}`);
     console.log(`API response status: ${response.status}`); // get either response.status || response.ok
-
     if (response.status !== 200) {
       userDetails.textContent = "API error.";
     }
@@ -44,7 +43,7 @@ searchButton.addEventListener("click", async () => {
       `;
 
       const repoResponse = await fetch(
-        `https://api.github.com/users/${username}/repos`,
+        `https://api.github.com/users/${username}/repos`
       );
       console.log(repoResponse);
 
@@ -63,7 +62,7 @@ searchButton.addEventListener("click", async () => {
         }
 
         userDetails.innerHTML += `Total Stars: ${formatNumber(
-          totalStars,
+          totalStars
         )} <br>`;
 
         repositoriesList.innerHTML = "";
