@@ -1,4 +1,4 @@
-const userNameInput = document.getElementById("username");
+const usernameInput = document.getElementById("username");
 const searchButton = document.getElementById("searchButton");
 const userDetails = document.getElementById("user-details");
 const repositoriesList = document.getElementById("repositories-list");
@@ -14,16 +14,21 @@ const formatNumber = (num) => {
 };
 
 searchButton.addEventListener("click", async () => {
-  const username = userNameInput.value.trim();
+  const username = usernameInput.value.trim();
   console.log(`User Entered username: ${username}`);
 
   if (!username) {
-    userInfo.textContent = "Please enter a username";
+    userDetails.textContent = "Please enter a username";
+    return;
   }
 
   try {
     const response = await fetch(`https://api.github.com/users/${username}`);
     console.log(`API response status: ${response.status}`); // get either response.status || response.ok
+
+    if (response.status !== 200) {
+      userDetails.textContent = "API error.";
+    }
 
     if (response.status === 200) {
       const userData = await response.json();
@@ -39,7 +44,7 @@ searchButton.addEventListener("click", async () => {
       `;
 
       const repoResponse = await fetch(
-        `https://api.github.com/users/${username}/repos`
+        `https://api.github.com/users/${username}/repos`,
       );
       console.log(repoResponse);
 
@@ -58,7 +63,7 @@ searchButton.addEventListener("click", async () => {
         }
 
         userDetails.innerHTML += `Total Stars: ${formatNumber(
-          totalStars
+          totalStars,
         )} <br>`;
 
         repositoriesList.innerHTML = "";
@@ -72,10 +77,12 @@ searchButton.addEventListener("click", async () => {
         console.error("Can't get the repos");
       }
     } else {
-      userInfo.textContent = "User not found";
+      userDetails.textContent = "User not found";
     }
   } catch (error) {
+    console.log(error);
+
     console.error("Error fetching user data: ", error);
-    userInfo.textContent = "Something went wrong. Please try again later";
+    userDetails.textContent = "Something went wrong. Please try again later";
   }
 });
