@@ -1,24 +1,28 @@
-const usernameInput = document.getElementById("username");
+const userNameInput = document.getElementById("username");
 const searchButton = document.getElementById("searchButton");
+const userInfo = document.getElementById("user-info");
 
-searchButton.addEventListener("click", async function () {
-  const username = usernameInput.value.trim();
+searchButton.addEventListener("click", async () => {
+  const username = userNameInput.value.trim();
+  console.log(username);
 
   if (!username) {
-    console.error("Please enter a username.");
-    return;
+    userInfo.textContent = "Please enter a username";
   }
 
   try {
     const response = await fetch(`https://api.github.com/users/${username}`);
+    console.log(response.status); // get either response.status || response.ok
 
-    if (response.ok) {
+    if (response.status === 200) {
       const userData = await response.json();
-      console.log("User Data:", userData);
+      console.log(userData);
+      userInfo.textContent = `Username: ${userData.login}`;
     } else {
-      console.error("User not found.");
+      userInfo.textContent = "User not found";
     }
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error fetching user data: ", error);
+    // TODO: display something in ui
   }
 });
