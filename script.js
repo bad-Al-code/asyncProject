@@ -1,6 +1,7 @@
 const userNameInput = document.getElementById("username");
 const searchButton = document.getElementById("searchButton");
-const userInfo = document.getElementById("user-info");
+const userDetails = document.getElementById("user-details");
+const repositoriesList = document.getElementById("repositories-list");
 
 searchButton.addEventListener("click", async () => {
   const username = userNameInput.value.trim();
@@ -18,11 +19,33 @@ searchButton.addEventListener("click", async () => {
       const userData = await response.json();
       console.log("User Data: ", userData);
 
-      userInfo.innerHTML = `
+      userDetails.innerHTML = `
         Username: ${userData.login} <br>
         Name: ${userData.name} <br> 
         Bio: ${userData.bio}
       `;
+
+      const repoResponse = await fetch(
+        `https://api.github.com/users/${username}/repos`
+      );
+      console.log(repoResponse);
+
+      if (repoResponse.ok) {
+        const userRepos = await repoResponse.json();
+        console.log("User Repos: ", userRepos); // https://jsonformatter.org/json-pretty-print => see html_url is there
+
+        // chatGPT: https://chatgpt.com/share/b74cccf3-1b7f-4b50-b7cd-dd267e1999be
+        const topFiveRepos = userRepos.slice(0, 5);
+        console.log(topFiveRepos);
+        topFiveRepos.forEach((repo) => {
+          const listItem = document.createElement("li");
+          console.log(repo.html_url);
+          listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>`;
+          repositoriesList.appendChild(listItem);
+        });
+      } else {
+        console.error("Can't get the repos");
+      }
     } else {
       userInfo.textContent = "User not found";
     }
