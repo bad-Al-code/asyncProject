@@ -1,4 +1,4 @@
-const userNameInput = document.getElementById("username");
+const usernameInput = document.getElementById("username");
 const searchButton = document.getElementById("searchButton");
 const userDetails = document.getElementById("user-details");
 const repositoriesList = document.getElementById("repositories-list");
@@ -14,11 +14,12 @@ const formatNumber = (num) => {
 };
 
 searchButton.addEventListener("click", async () => {
-  const username = userNameInput.value.trim();
+  const username = usernameInput.value.trim();
   console.log(`User Entered username: ${username}`);
 
   if (!username) {
-    userInfo.textContent = "Please enter a username";
+    userDetails.textContent = "Please enter a username";
+    return;
   }
 
   try {
