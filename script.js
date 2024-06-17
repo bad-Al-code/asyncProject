@@ -4,7 +4,7 @@ const userInfo = document.getElementById("user-info");
 
 searchButton.addEventListener("click", async () => {
   const username = userNameInput.value.trim();
-  console.log('User Entered username: ', ${username});
+  console.log(`User Entered username: ${username}`);
 
   if (!username) {
     userInfo.textContent = "Please enter a username";
@@ -17,7 +17,12 @@ searchButton.addEventListener("click", async () => {
     if (response.status === 200) {
       const userData = await response.json();
       console.log("User Data: ", userData);
-      userInfo.textContent = `Username: ${userData.login}`;
+
+      userInfo.innerHTML = `
+        Username: ${userData.login} <br>
+        Name: ${userData.name} <br> 
+        Bio: ${userData.bio}
+      `;
     } else {
       userInfo.textContent = "User not found";
     }
