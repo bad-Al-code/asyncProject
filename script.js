@@ -51,6 +51,16 @@ searchButton.addEventListener("click", async () => {
         const topFiveRepos = userRepos.slice(0, 5);
         console.log(topFiveRepos);
 
+        // chatgpt:https://chatgpt.com/share/b74cccf3-1b7f-4b50-b7cd-dd267e1999be
+        let totalStars = 0;
+        for (const repo of userRepos) {
+          totalStars += repo.stargazers_count;
+        }
+
+        userDetails.innerHTML += `Total Stars: ${formatNumber(
+          totalStars
+        )} <br>`;
+
         repositoriesList.innerHTML = "";
         topFiveRepos.forEach((repo) => {
           const listItem = document.createElement("li");
