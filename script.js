@@ -73,10 +73,12 @@ searchButton.addEventListener("click", async () => {
         console.error("Can't get the repos");
       }
     } else {
-      userInfo.textContent = "User not found";
+      userDetails.textContent = "User not found";
     }
   } catch (error) {
+    console.log(error);
+
     console.error("Error fetching user data: ", error);
-    userInfo.textContent = "Something went wrong. Please try again later";
+    userDetails.textContent = "Something went wrong. Please try again later";
   }
 });
