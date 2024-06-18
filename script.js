@@ -34,7 +34,7 @@ async function fetchUserData(username) {
 
 async function fetUserRepos(username) {
   const response = await fetch(
-    `https://api.github.com/users/${username}/repos`
+    `https://api.github.com/users/${username}/repos`,
   );
 
   if (response.status !== 200) {
@@ -76,7 +76,7 @@ function displayUserRepos(userRepos) {
   });
 }
 
-searchButton.addEventListener("click", async () => {
+const fetchData = async () => {
   const username = usernameInput.value.trim();
   console.log(`User Entered username: ${username}`);
 
@@ -95,7 +95,7 @@ searchButton.addEventListener("click", async () => {
     console.error("Error fetching user data: ", error);
     userDetails.textContent = "Something  went wrong.";
   }
-});
+};
 
 tabs.forEach((tab) => {
   tab.addEventListener("click", () => {
@@ -108,3 +108,12 @@ tabs.forEach((tab) => {
     document.getElementById(tab.dataset.tab).classList.add("active");
   });
 });
+
+usernameInput.addEventListener("keyup", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    searchButton.click();
+  }
+});
+
+searchButton.addEventListener("click", fetchData);
