@@ -2,6 +2,8 @@ const usernameInput = document.getElementById("username");
 const searchButton = document.getElementById("searchButton");
 const userDetails = document.getElementById("user-details");
 const repositoriesList = document.getElementById("repositories-list");
+const tabs = document.querySelectorAll(".tab");
+const tabContents = document.querySelectorAll(".tab-content");
 
 const formatNumber = (num) => {
   if (num >= 1000000) {
@@ -32,7 +34,7 @@ async function fetchUserData(username) {
 
 async function fetUserRepos(username) {
   const response = await fetch(
-    `https://api.github.com/users/${username}/repos`,
+    `https://api.github.com/users/${username}/repos`
   );
 
   if (response.status !== 200) {
@@ -44,12 +46,12 @@ async function fetUserRepos(username) {
 
 function displayUserDetails(userData) {
   userDetails.innerHTML = `
-        Username: ${userData.login} <br>
-        Name: ${userData.name} <br> 
-        Bio: ${userData.bio} <br>
-        Public Repos: ${userData.public_repos} <br>
-        Followers: ${formatNumber(userData.followers)} <br>
-        Following: ${formatNumber(userData.following)} <br>
+<p>Username: ${userData.login}</p>
+    <p>Name: ${userData.name}</p>
+    <p>Bio: ${userData.bio}</p>
+    <p>Public Repos: ${userData.public_repos}</p>
+    <p>Followers: ${formatNumber(userData.followers)}</p>
+    <p>Following: ${formatNumber(userData.following)}</p>
       `;
 }
 
@@ -63,7 +65,7 @@ function displayUserRepos(userRepos) {
     totalStars += repo.stargazers_count;
   }
 
-  userDetails.innerHTML += `Total Stars: ${formatNumber(totalStars)} <br>`;
+  userDetails.innerHTML += `<p>Total Stars: ${formatNumber(totalStars)}</p>`;
 
   repositoriesList.innerHTML = "";
   topFiveRepos.forEach((repo) => {
@@ -93,4 +95,16 @@ searchButton.addEventListener("click", async () => {
     console.error("Error fetching user data: ", error);
     userDetails.textContent = "Something  went wrong.";
   }
+});
+
+tabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    tabs.forEach((t) => t.classList.remove("active"));
+    tab.classList.add("active");
+
+    tabContents.forEach((content) => {
+      content.classList.remove("active");
+    });
+    document.getElementById(tab.dataset.tab).classList.add("active");
+  });
 });
