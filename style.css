@@ -1,9 +1,30 @@
 body {
-  background-color: #3b4041;
-  color: #fff;
+  background-color: #0202023f;
+  color: #000000;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
   flex-direction: column;
+}
+
+.username {
+  border-radius: 0.4rem;
+  border: none;
+  padding: 0.4rem;
+  margin: 0.4rem;
+}
+
+.username:foucs {
+  border: none;
+}
+
+button {
+  background: #02020273;
+  color: #fff;
+  border-radius: 0.4rem;
+  border: none;
+  /* border: 0.1rem solid #fff; */
+  padding: 0.4rem;
+  /* margin: 0.4rem; */
 }
