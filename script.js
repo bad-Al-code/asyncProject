@@ -25,7 +25,7 @@ class ApiError extends Error {
 async function fetchUserData(username) {
   const response = await fetch(`https://api.github.com/users/${username}`);
 
-  if (response.status !== 200) {
+  if (!response.ok) {
     throw new ApiError(`API error: ${response.status}`);
   }
 
@@ -37,7 +37,7 @@ async function fetUserRepos(username) {
     `https://api.github.com/users/${username}/repos`,
   );
 
-  if (response.status !== 200) {
+  if (!response.ok) {
     throw new ApiError("Failed to fetch user repos");
   }
 
@@ -47,11 +47,11 @@ async function fetUserRepos(username) {
 function displayUserDetails(userData) {
   userDetails.innerHTML = `
 <p>Username: ${userData.login}</p>
-    <p>Name: ${userData.name}</p>
-    <p>Bio: ${userData.bio}</p>
+    <p>Name: ${userData.name} || "-"</p>
+    <p>Bio: ${userData.bio}|| "-"</p>
     <p>Public Repos: ${userData.public_repos}</p>
     <p>Followers: ${formatNumber(userData.followers)}</p>
-    <p>Following: ${formatNumber(userData.following)}</p>
+    <p>Following: ${formatNumber(userData.following)}|| 0</p>
       `;
 }
 
@@ -93,7 +93,7 @@ const fetchData = async () => {
     displayUserRepos(userRepos);
   } catch (error) {
     console.error("Error fetching user data: ", error);
-    userDetails.textContent = "Something  went wrong.";
+    userDetails.textContent = "Failed to fetch user data or repos";
   }
 };
 
