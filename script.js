@@ -47,11 +47,11 @@ async function fetUserRepos(username) {
 function displayUserDetails(userData) {
   userDetails.innerHTML = `
 <p>Username: ${userData.login}</p>
-    <p>Name: ${userData.name} || "-"</p>
-    <p>Bio: ${userData.bio}|| "-"</p>
+    <p>Name: ${userData.name || "-"}</p>
+    <p>Bio: ${userData.bio || "-"}</p>
     <p>Public Repos: ${userData.public_repos}</p>
     <p>Followers: ${formatNumber(userData.followers)}</p>
-    <p>Following: ${formatNumber(userData.following)}|| 0</p>
+    <p>Following: ${formatNumber(userData.following)}</p>
       `;
 }
 
