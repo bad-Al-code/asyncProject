@@ -13,5 +13,5 @@ This project is a simple web application that allows users to search for GitHub 
 ## Tech Stack
 
 - HTML: Structure of the page
-- CSS: Basic Styling
+- CSS: Basic Styling { tbbh, used chatGPT }
 - JavaScript: Fetches user data from the GitHub API and dynamically updates the page content.
