@@ -8,25 +8,32 @@
   </head>
   <body>
     <div class="container">
-      <header>
+<header>
         <h1>GitHub User Search</h1>
       </header>
       <main>
+        <section class="intro">
+          <h2>Welcome to GitHub User Search!</h2>
+          <p>
+            This application allows you to search for GitHub users and view their
+            profile details and repositories. Simply enter a GitHub username in the
+            search bar below and click the "Search" button.
+          </p>
+          <p>
+            On the "User Details" tab, you will see information about the user,
+            including their username, name, bio, number of public repositories,
+            followers, and following count. The "Repositories" tab will display a
+            list of their repositories, with pagination support to navigate through
+            all repositories.
+          </p>
+        </section>      
+      <main>
+<div class="search-container">
         <div class="search-bar">
-          <input
-            type="text"
-            id="username"
-            class="username"
-            placeholder="Enter Username"
-          />
+          <input type="text" id="username" class="username" placeholder="Enter Username" />
           <button id="searchButton">Search</button>
         </div>
-        <!-- <div id="user-info">
-          <h2>User Information</h2>
-          <p id="user-details"></p>
-          <h3>Repositories</h3>
-          <ul id="repositories-list"></ul>
-        </div> -->
+      </div>
         <div class="tabs-container">
           <ul class="tabs">
             <li class="tab active" data-tab="user-details">User Details</li>
