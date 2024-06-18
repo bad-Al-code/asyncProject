@@ -1,17 +1,31 @@
+:root {
+  --primary-color: #333;
+  --secondary-color: #ddd;
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+
+  --box-shadow: 0 0 0.6rem var(--shadow-color);
+  --margin-bottom: 1rem;
+  --border-radius: 0.8rem;
+  --border: 0.1rem solid var(--secondary-color);
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
-  padding: 20px;
-  background-color: #f5f5f5;
+  padding: 1.25rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 .container {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
-  padding: 20px;
-  border-radius: 5px;
+  padding: 1.25rem;
+  border-radius: var(--border-radius);
   background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--box-shadow);
 }
 
 header {
@@ -19,36 +33,47 @@ header {
 }
 
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 1.2rem;
 }
 
 .search-bar {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: var(--margin-bottom);
 }
 
 .username {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
+  padding: 0.6rem;
+  border: var(--border);
+  border-radius: var(--border-radius);
   flex: 1;
-  margin-right: 10px;
+  margin-right: 0.6rem;
 }
 
 #searchButton {
-  padding: 10px 20px;
-  background-color: #333;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--primary-color);
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.5s;
+  box-shadow: var(--box-shadow);
+}
+
+#searchButton:hover {
+  background-color: #121111;
+  box-shadow: 0 0 1rem rgb(176, 220, 221);
+}
+
+#searchButton:active {
+  transform: scale(0.95);
 }
 
 .tabs-container {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: var(--margin-bottom);
   align-items: center;
 }
 
@@ -57,40 +82,34 @@ h1 {
   list-style: none;
   padding: 0;
   margin: 0;
-  /* border-bottom: 1px solid #ddd; */
 }
 
 .tabs .tab {
-  padding: 10px 20px;
-  border: 1px solid #ddd;
-  /* border-bottom: none; */
+  padding: 0.6rem 1.2rem;
+  border: var(--border);
   cursor: pointer;
-  border-radius: 10px;
-  /* margin-bottom: 5px;
-  margin-right: 5px; */
-  margin: 5px 5px;
-  border-radius: 10px;
+  border-radius: var(--border-radius);
+  margin: 0.3rem 0.3rem;
 }
 
 .tabs .tab.active {
-  background-color: #ddd;
-  box-shadow: 0px 5px 10px 0px #d8dbde;
-  border-bottom: 1px solid #c1bbbb;
+  background-color: var(--secondary-color);
+  box-shadow: var(--box-shadow);
+  border-bottom: none;
 }
 
 .content {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
   width: 100%;
   box-sizing: border-box;
-
-  box-shadow: 0px 5px 10px 0px #e4e9ee;
+  box-shadow: var(--box-shadow);
 }
 
 .tab-content {
   display: none;
-  padding: 20px;
+  padding: 1.25rem;
 }
 
 .tab-content.active {
@@ -99,5 +118,5 @@ h1 {
 
 #user-details p,
 #repositories-list li {
-  margin: 10px 0;
+  margin: 0.6rem 0;
 }
