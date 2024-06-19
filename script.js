@@ -35,7 +35,7 @@ async function fetchUserData(username) {
 
 async function fetchUserRepos(username) {
   const response = await fetch(
-    `https://api.github.com/users/${username}/repos`
+    `https://api.github.com/users/${username}/repos`,
   );
 
   if (!response.ok) {
@@ -47,7 +47,7 @@ async function fetchUserRepos(username) {
 
 async function fetchUserIssues(username, repo) {
   const response = await fetch(
-    `https://api.github.com/repos/${username}/${repo}/issues`
+    `https://api.github.com/repos/${username}/${repo}/issues`,
   );
   // console.log(response);
 
@@ -59,8 +59,7 @@ async function fetchUserIssues(username, repo) {
 }
 
 function displayUserDetails(userData) {
-  userDetails.innerHTML = `
-    <p>Username: ${userData.login}</p>
+  userDetails.innerHTML = `     <p>Username: ${userData.login}</p>
     <p>Name: ${userData.name || "-"}</p>
     <p>Bio: ${userData.bio || "-"}</p>
     <p>Public Repos: ${userData.public_repos}</p>
@@ -120,10 +119,12 @@ const fetchData = async () => {
     const userData = await fetchUserData(username);
     displayUserDetails(userData);
 
-    const userRepos = await fetchUserRepos(username);
-    displayUserRepos(userRepos);
+    // const userRepos = await fetchUserRepos(username);
+    // displayUserRepos(userRepos);
 
-    await displayUserIssues(username, userRepos);
+    // await displayUserIssues(username, userRepos);
+    repoFetched = false;
+    userRepos = [];
   } catch (error) {
     console.error("Error fetching user data: ", error);
     userDetails.textContent = "Failed to fetch user data";
@@ -132,8 +133,11 @@ const fetchData = async () => {
   }
 };
 
+let repoFetched = false;
+let userRepos = [];
+
 tabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
+  tab.addEventListener("click", async () => {
     tabs.forEach((t) => t.classList.remove("active"));
     tab.classList.add("active");
 
@@ -141,6 +145,31 @@ tabs.forEach((tab) => {
       content.classList.remove("active");
     });
     document.getElementById(tab.dataset.tab).classList.add("active");
+
+    if (tab.dataset.tab === "repositories-list" && !repoFetched) {
+      const username = usernameInput.value.trim();
+      if (username) {
+        try {
+          userRepos = await fetchUserRepos(username);
+          displayUserRepos(userRepos);
+          repoFetched = true;
+        } catch (error) {
+          console.error("Error fetching user repos: ", error);
+          repositoriesList.textContent = "Failed to fetch user repos";
+        }
+      }
+    }
+    if (tab.dataset.tab === "issues-list") {
+      const username = usernameInput.value.trim();
+      if (username && userRepos.length > 0) {
+        try {
+          await displayUserIssues(username, userRepos);
+        } catch (error) {
+          console.error("Error fetching user issues: ", error);
+          repositoriesList.textContent = "Failed to fetch user issues";
+        }
+      }
+    }
   });
 });
 
