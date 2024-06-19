@@ -124,6 +124,7 @@ const fetchData = async () => {
 
     // await displayUserIssues(username, userRepos);
     repoFetched = false;
+    issueFetched = false;
     userRepos = [];
   } catch (error) {
     console.error("Error fetching user data: ", error);
@@ -134,6 +135,7 @@ const fetchData = async () => {
 };
 
 let repoFetched = false;
+let issueFetched = false;
 let userRepos = [];
 
 tabs.forEach((tab) => {
@@ -159,11 +161,12 @@ tabs.forEach((tab) => {
         }
       }
     }
-    if (tab.dataset.tab === "issues-list") {
+    if (tab.dataset.tab === "issues-list" && !issueFetched) {
       const username = usernameInput.value.trim();
       if (username && userRepos.length > 0) {
         try {
           await displayUserIssues(username, userRepos);
+          issueFetched = true;
         } catch (error) {
           console.error("Error fetching user issues: ", error);
           repositoriesList.textContent = "Failed to fetch user issues";
