@@ -35,7 +35,7 @@ async function fetchUserData(username) {
 
 async function fetchUserRepos(username) {
   const response = await fetch(
-    `https://api.github.com/users/${username}/repos`,
+    `https://api.github.com/users/${username}/repos`
   );
 
   if (!response.ok) {
@@ -47,7 +47,7 @@ async function fetchUserRepos(username) {
 
 async function fetchUserIssues(username, repo) {
   const response = await fetch(
-    `https://api.github.com/repos/${username}/${repo}/issues`,
+    `https://api.github.com/repos/${username}/${repo}/issues`
   );
   // console.log(response);
 
@@ -111,6 +111,8 @@ const fetchData = async () => {
 
   if (!username) {
     userDetails.textContent = "Please enter a username";
+    repositoriesList.textContent = "Please enter a username";
+    issuesList.textContent = "Please enter a username";
     return;
   }
 

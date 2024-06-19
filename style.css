@@ -1,9 +1,9 @@
 :root {
-  --primary-color: #333;
-  --secondary-color: #ddd;
-  --bg-color: #f5f5f5;
+  --primary-color: #111;
+  --secondary-color: #222;
+  --bg-color: #111;
   --text-color: #333;
-  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-color: #5c59596d;
   --button-hover-bg-color: #121111;
   --button-hover-shadow-color: rgb(176, 220, 221);
   --button-hover-box-shadow: 0 0 1rem var(--button-hover-shadow-color);
@@ -11,10 +11,12 @@
   --box-shadow: 0 0 0.6rem var(--shadow-color);
   --margin-bottom: 1rem;
   --border-radius: 0.8rem;
-  --border: 0.1rem solid var(--secondary-color);
+  --border-color: #555;
+  --border: 0.1rem solid var(--border-color);
 
-  --primary-bg-color: #fff;
-  --text-color: #333;
+  --primary-bg-color: #333;
+  --text-color: #fff;
+  --highlight-color: #fbfbfb45;
 }
 
 body {
@@ -88,10 +90,7 @@ h1 {
   border: none;
   border-radius: var(--border-radius);
   cursor: pointer;
-  transition:
-    background-color 0.3s,
-    transform 0.3s,
-    box-shadow 0.5s;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.5s;
   box-shadow: var(--box-shadow);
 }
 
@@ -156,7 +155,7 @@ h1 {
 }
 
 .highlight {
-  background-color: var(--secondary-color);
+  background-color: var(--highlight-color);
   padding: 2px;
   border-radius: 5px;
 }
