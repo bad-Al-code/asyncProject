@@ -2,6 +2,7 @@ const usernameInput = document.getElementById("username");
 const searchButton = document.getElementById("searchButton");
 const userDetails = document.getElementById("user-details");
 const repositoriesList = document.getElementById("repositories-list");
+const issuesList = document.getElementById("issues-list");
 const tabs = document.querySelectorAll(".tab");
 const tabContents = document.querySelectorAll(".tab-content");
 
@@ -32,7 +33,7 @@ async function fetchUserData(username) {
   return await response.json();
 }
 
-async function fetUserRepos(username) {
+async function fetchUserRepos(username) {
   const response = await fetch(
     `https://api.github.com/users/${username}/repos`,
   );
@@ -44,22 +45,33 @@ async function fetUserRepos(username) {
   return await response.json();
 }
 
+async function fetchUserIssues(username, repo) {
+  const response = await fetch(
+    `https://api.github.com/repos/${username}/${repo}/issues`,
+  );
+  // console.log(response);
+
+  if (!response.ok) {
+    throw new ApiError("Failed to fetch user repo issues");
+  }
+
+  return await response.json();
+}
+
 function displayUserDetails(userData) {
   userDetails.innerHTML = `
-<p>Username: ${userData.login}</p>
+    <p>Username: ${userData.login}</p>
     <p>Name: ${userData.name || "-"}</p>
     <p>Bio: ${userData.bio || "-"}</p>
     <p>Public Repos: ${userData.public_repos}</p>
     <p>Followers: ${formatNumber(userData.followers)}</p>
     <p>Following: ${formatNumber(userData.following)}</p>
-      `;
+  `;
 }
 
 function displayUserRepos(userRepos) {
   const topFiveRepos = userRepos.slice(0, 5);
-  // console.log(topFiveRepos);
 
-  // chatgpt:https://chatgpt.com/share/b74cccf3-1b7f-4b50-b7cd-dd267e1999be
   let totalStars = 0;
   for (const repo of userRepos) {
     totalStars += repo.stargazers_count;
@@ -70,15 +82,25 @@ function displayUserRepos(userRepos) {
   repositoriesList.innerHTML = "";
   topFiveRepos.forEach((repo) => {
     const listItem = document.createElement("li");
-    // console.log(repo.html_url);
     listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>`;
     repositoriesList.appendChild(listItem);
   });
 }
 
+async function displayUserIssues(username, userRepos) {
+  issuesList.innerHTML = "";
+  for (const repo of userRepos) {
+    const issues = await fetchUserIssues(username, repo.name);
+    issues.forEach((issue) => {
+      const listItem = document.createElement("li");
+      listItem.innerHTML = `<a href="${issue.html_url}" target="_blank">${issue.title}</a>`;
+      issuesList.appendChild(listItem);
+    });
+  }
+}
+
 const fetchData = async () => {
   const username = usernameInput.value.trim();
-  console.log(`User Entered username: ${username}`);
 
   if (!username) {
     userDetails.textContent = "Please enter a username";
@@ -89,8 +111,10 @@ const fetchData = async () => {
     const userData = await fetchUserData(username);
     displayUserDetails(userData);
 
-    const userRepos = await fetUserRepos(username);
+    const userRepos = await fetchUserRepos(username);
     displayUserRepos(userRepos);
+
+    await displayUserIssues(username, userRepos);
   } catch (error) {
     console.error("Error fetching user data: ", error);
     userDetails.textContent = "Failed to fetch user data or repos";
