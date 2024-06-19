@@ -70,7 +70,7 @@ function displayUserDetails(userData) {
 }
 
 function displayUserRepos(userRepos) {
-  const topFiveRepos = userRepos.slice(0, 5);
+  // const topFiveRepos = userRepos.slice(0, 5);
 
   let totalStars = 0;
   for (const repo of userRepos) {
@@ -80,7 +80,7 @@ function displayUserRepos(userRepos) {
   userDetails.innerHTML += `<p>Total Stars: ${formatNumber(totalStars)}</p>`;
 
   repositoriesList.innerHTML = "";
-  topFiveRepos.forEach((repo) => {
+  userRepos.forEach((repo) => {
     const listItem = document.createElement("li");
     listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>`;
     repositoriesList.appendChild(listItem);
@@ -91,11 +91,18 @@ async function displayUserIssues(username, userRepos) {
   issuesList.innerHTML = "";
   for (const repo of userRepos) {
     const issues = await fetchUserIssues(username, repo.name);
-    issues.forEach((issue) => {
-      const listItem = document.createElement("li");
-      listItem.innerHTML = `<a href="${issue.html_url}" target="_blank">${issue.title}</a>`;
-      issuesList.appendChild(listItem);
-    });
+
+    if (issues.length > 0) {
+      const repoHeading = document.createElement("h3");
+      repoHeading.textContent = repo.name;
+      issuesList.appendChild(repoHeading);
+
+      issues.forEach((issue) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `<a href="${issue.html_url}" target="_blank">${issue.title}</a>`;
+        issuesList.appendChild(listItem);
+      });
+    }
   }
 }
 
@@ -117,7 +124,9 @@ const fetchData = async () => {
     await displayUserIssues(username, userRepos);
   } catch (error) {
     console.error("Error fetching user data: ", error);
-    userDetails.textContent = "Failed to fetch user data or repos";
+    userDetails.textContent = "Failed to fetch user data";
+    repositoriesList.textContent = "Failed to fetch user repos";
+    issuesList.textContent = "Failed to fetch user issues";
   }
 };
 
