@@ -6,45 +6,58 @@
     <title>GitHub User Search (Modern)</title>
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
     <div class="container">
-<header>
+      <header>
         <h1>GitHub User Search</h1>
       </header>
       <main>
         <section class="intro">
           <h2>Welcome to GitHub User Search!</h2>
           <p>
-            This application allows you to search for GitHub users and view their
-            profile details and repositories. Simply enter a GitHub username in the
-            search bar below and click the <span class="highlight">Search</span> button.
+            This application allows you to search for GitHub users and view
+            their profile details and repositories. Simply enter a GitHub
+            username in the search bar below and click the
+            <span class="highlight">Search</span> button.
           </p>
           <p>
-            On the <span class="highlight">User Details</span> tab, you will see information about the user,
-            including their username, name, bio, number of public repositories,
-            followers, and following count. The <span class="highlight">Repositories</span> tab will display a
-            list of their repositories, with pagination support to navigate through
+            On the <span class="highlight">User Details</span> tab, you will see
+            information about the user, including their username, name, bio,
+            number of public repositories, followers, and following count. The
+            <span class="highlight">Repositories</span> tab will display a list
+            of their repositories, with pagination support to navigate through
             all repositories.
           </p>
-        </section>      
-      <main>
-<div class="search-container">
-        <div class="search-bar">
-          <input type="text" id="username" class="username" placeholder="Enter Username" />
-          <button id="searchButton">Search</button>
-        </div>
-      </div>
-        <div class="tabs-container">
-          <ul class="tabs">
-            <li class="tab active" data-tab="user-details">User Details</li>
-            <li class="tab" data-tab="repositories-list">Repositories</li>
-            <li class="tab" data-tab="issues-list">Issues</li>
-          </ul>
-          <div class="content">
-            <div id="user-details" class="tab-content active"></div>
-            <div id="repositories-list" class="tab-content"></div>
-            <div id="issues-list" class="tab-content"></div>
+        </section>
+        <main>
+          <div class="search-container">
+            <div class="search-bar">
+              <input
+                type="text"
+                id="username"
+                class="username"
+                placeholder="Enter Username"
+              />
+              <button id="searchButton">Search</button>
+            </div>
           </div>
+          <div class="tabs-container">
+            <ul class="tabs">
+              <li class="tab active" data-tab="user-details">User Details</li>
+              <li class="tab" data-tab="repositories-list">Repositories</li>
+              <li class="tab" data-tab="issues-list">Issues</li>
+            </ul>
+            <div class="content">
+              <div id="user-details" class="tab-content active"></div>
+              <div id="repositories-list" class="tab-content"></div>
+              <div id="issues-list" class="tab-content"></div>
+            </div>
+          </div>
+        </main>
+        <div class="pagination-controls">
+          <button id="prev-page">Previous</button
+          ><button id="next-page">Next</button>
         </div>
       </main>
     </div>
