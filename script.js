@@ -5,6 +5,15 @@ const repositoriesList = document.getElementById("repositories-list");
 const issuesList = document.getElementById("issues-list");
 const tabs = document.querySelectorAll(".tab");
 const tabContents = document.querySelectorAll(".tab-content");
+const loadingIndicatorUserDetails = document.getElementById(
+  "loadingIndicatorUserDetails"
+);
+const loadingIndicatorRepositories = document.getElementById(
+  "loadingIndicatorRepositories"
+);
+const loadingIndicatorIssues = document.getElementById(
+  "loadingIndicatorIssues"
+);
 
 const formatNumber = (num) => {
   if (num >= 1000000) {
@@ -35,7 +44,7 @@ async function fetchUserData(username) {
 
 async function fetchUserRepos(username) {
   const response = await fetch(
-    `https://api.github.com/users/${username}/repos`,
+    `https://api.github.com/users/${username}/repos`
   );
 
   if (!response.ok) {
@@ -47,7 +56,7 @@ async function fetchUserRepos(username) {
 
 async function fetchUserIssues(username, repo) {
   const response = await fetch(
-    `https://api.github.com/repos/${username}/${repo}/issues`,
+    `https://api.github.com/repos/${username}/${repo}/issues`
   );
   // console.log(response);
 
@@ -116,13 +125,10 @@ const fetchData = async () => {
   }
 
   try {
+    loadingIndicatorUserDetails.style.display = "block";
     const userData = await fetchUserData(username);
     displayUserDetails(userData);
 
-    // const userRepos = await fetchUserRepos(username);
-    // displayUserRepos(userRepos);
-
-    // await displayUserIssues(username, userRepos);
     repoFetched = false;
     issueFetched = false;
     userRepos = [];
@@ -131,6 +137,8 @@ const fetchData = async () => {
     userDetails.textContent = "Failed to fetch user data";
     repositoriesList.textContent = "Failed to fetch user repos";
     issuesList.textContent = "Failed to fetch user issues";
+  } finally {
+    loadingIndicatorUserDetails.style.display = "none";
   }
 };
 
@@ -148,6 +156,19 @@ tabs.forEach((tab) => {
     });
     document.getElementById(tab.dataset.tab).classList.add("active");
 
+    switch (tab.dataset.tab) {
+      case "repositories-list":
+        if (!repoFetched) {
+          loadingIndicatorRepositories.style.display = "block";
+        }
+        break;
+      case "issues-list":
+        if (!issueFetched) {
+          loadingIndicatorRepositories.style.display = "block";
+        }
+        break;
+    }
+
     if (tab.dataset.tab === "repositories-list" && !repoFetched) {
       const username = usernameInput.value.trim();
       if (username) {
@@ -158,6 +179,8 @@ tabs.forEach((tab) => {
         } catch (error) {
           console.error("Error fetching user repos: ", error);
           repositoriesList.textContent = "Failed to fetch user repos";
+        } finally {
+          loadingIndicatorRepositories.style.display = "none";
         }
       }
     }
@@ -170,6 +193,8 @@ tabs.forEach((tab) => {
         } catch (error) {
           console.error("Error fetching user issues: ", error);
           repositoriesList.textContent = "Failed to fetch user issues";
+        } finally {
+          loadingIndicatorIssues.style.display = "none";
         }
       }
     }

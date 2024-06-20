@@ -49,9 +49,24 @@
               <li class="tab" data-tab="issues-list">Issues</li>
             </ul>
             <div class="content">
-              <div id="user-details" class="tab-content active"></div>
-              <div id="repositories-list" class="tab-content"></div>
-              <div id="issues-list" class="tab-content"></div>
+              <div id="user-details" class="tab-content active">
+                <div class="loading-indicator" id="loadingIndicatorUserDetails">
+                  Loading...
+                </div>
+              </div>
+              <div id="repositories-list" class="tab-content">
+                <div
+                  class="loading-indicator"
+                  id="loadingIndicatorRepositories"
+                >
+                  Loading...
+                </div>
+              </div>
+              <div id="issues-list" class="tab-content">
+                <div class="loading-indicator" id="loadingIndicatorIssues">
+                  Loading...
+                </div>
+              </div>
             </div>
           </div>
         </main>
