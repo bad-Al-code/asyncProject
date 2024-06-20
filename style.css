@@ -161,7 +161,7 @@ h1 {
 }
 
 .loading-indicator {
-  display: none;
+  /* display: none;
   position: fixed;
   z-index: 1000;
   left: 50%;
@@ -173,5 +173,14 @@ h1 {
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   font-size: 1.2rem;
-  text-align: center;
+  text-align: center; */
+  display: none;
+  align-items: center;
+  padding: 1rem;
+  font-size: 1.2rem;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  box-shadow: var(--box-shadow);
+  width: fit-content;
 }
