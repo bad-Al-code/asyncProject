@@ -54,13 +54,18 @@ class ApiError extends Error {
  * @throws {ApiError} Throws error if API response is not successful
  */
 async function fetchUserData(username) {
-  const response = await fetch(`https://api.github.com/users/${username}`);
+  try {
+    const response = await fetch(`https://api.github.com/users/${username}`);
 
-  if (!response.ok) {
-    throw new ApiError(`API error: ${response.status}`);
+    if (!response.ok) {
+      throw new ApiError(`API error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching user data: ", error);
+    throw new ApiError("Failed to fetch user data");
   }
-
-  return await response.json();
 }
 
 /**
@@ -70,15 +75,20 @@ async function fetchUserData(username) {
  * @throws {ApiError} Throws error if API response is not successful
  */
 async function fetchUserRepos(username) {
-  const response = await fetch(
-    `https://api.github.com/users/${username}/repos`,
-  );
+  try {
+    const response = await fetch(
+      `https://api.github.com/users/${username}/repos`,
+    );
 
-  if (!response.ok) {
-    throw new ApiError("Failed to fetch user repos");
+    if (!response.ok) {
+      throw new ApiError("Failed to fetch user repos");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching user repositories: ", error);
+    throw new ApiError("Failed to fetch user repositories");
   }
-
-  return await response.json();
 }
 
 /**
@@ -89,15 +99,20 @@ async function fetchUserRepos(username) {
  * @throws {ApiError} Throws error if API response is not successful
  */
 async function fetchUserIssues(username, repo) {
-  const response = await fetch(
-    `https://api.github.com/repos/${username}/${repo}/issues`,
-  );
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${username}/${repo}/issues`,
+    );
 
-  if (!response.ok) {
-    throw new ApiError("Failed to fetch user repo issues");
+    if (!response.ok) {
+      throw new ApiError("Failed to fetch user repo issues");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching issues for ${repo}: `, error);
+    throw new ApiError(`Failed to fetch issues for ${repo}`);
   }
-
-  return await response.json();
 }
 
 /**
@@ -120,19 +135,24 @@ function displayUserDetails(userData) {
  * @param {Array<Object>} userRepos - An array of user repository objects
  */
 function displayUserRepos(userRepos) {
-  repositoriesList.innerHTML = "";
+  try {
+    repositoriesList.innerHTML = "";
 
-  const startIndex = (currentPage - 1) * perPage;
-  const endIndex = startIndex + perPage;
-  const paginatedRepos = userRepos.slice(startIndex, endIndex);
+    const startIndex = (currentPage - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    const paginatedRepos = userRepos.slice(startIndex, endIndex);
 
-  paginatedRepos.forEach((repo) => {
-    const listItem = document.createElement("li");
-    listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>`;
-    repositoriesList.appendChild(listItem);
-  });
+    paginatedRepos.forEach((repo) => {
+      const listItem = document.createElement("li");
+      listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>`;
+      repositoriesList.appendChild(listItem);
+    });
 
-  updatePaginationControls(userRepos.length);
+    updatePaginationControls(userRepos.length);
+  } catch (error) {
+    console.error("Error displaying user repositories: ", error);
+    repositoriesList.textContent = "Failed to display user repositories";
+  }
 }
 
 /**
@@ -140,38 +160,43 @@ function displayUserRepos(userRepos) {
  * @param {number} totalRepos - Total number of user repositories
  */
 function updatePaginationControls(totalRepos) {
-  const totalPages = Math.ceil(totalRepos / perPage);
+  try {
+    const totalPages = Math.ceil(totalRepos / perPage);
 
-  const paginationControls = document.getElementById("pagination-controls");
-  paginationControls.innerHTML = "";
+    const paginationControls = document.getElementById("pagination-controls");
+    paginationControls.innerHTML = "";
 
-  const prevButton = document.createElement("button");
-  prevButton.textContent = "Previous";
-  prevButton.disabled = currentPage === 1;
-  prevButton.classList.add("pagination-button");
-  prevButton.addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage--;
-      fetchAndDisplayRepos(usernameInput.value.trim());
-    }
-  });
-  paginationControls.appendChild(prevButton);
+    const prevButton = document.createElement("button");
+    prevButton.textContent = "Previous";
+    prevButton.disabled = currentPage === 1;
+    prevButton.classList.add("pagination-button");
+    prevButton.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        fetchAndDisplayRepos(usernameInput.value.trim());
+      }
+    });
+    paginationControls.appendChild(prevButton);
 
-  const pageNumber = document.createElement("span");
-  pageNumber.textContent = `Page ${currentPage} of ${totalPages}`;
-  paginationControls.appendChild(pageNumber);
+    const pageNumber = document.createElement("span");
+    pageNumber.textContent = `Page ${currentPage} of ${totalPages}`;
+    paginationControls.appendChild(pageNumber);
 
-  const nextButton = document.createElement("button");
-  nextButton.textContent = "Next";
-  nextButton.disabled = currentPage === totalPages;
-  nextButton.classList.add("pagination-button");
-  nextButton.addEventListener("click", () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      fetchAndDisplayRepos(usernameInput.value.trim());
-    }
-  });
-  paginationControls.appendChild(nextButton);
+    const nextButton = document.createElement("button");
+    nextButton.textContent = "Next";
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.classList.add("pagination-button");
+    nextButton.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        fetchAndDisplayRepos(usernameInput.value.trim());
+      }
+    });
+    paginationControls.appendChild(nextButton);
+  } catch (error) {
+    console.error("Error updating pagination controls: ", error);
+    // Handle error (if needed) for pagination controls
+  }
 }
 
 /**
@@ -180,25 +205,30 @@ function updatePaginationControls(totalRepos) {
  * @param {Array<Object>} userRepos - An array of user repository objects
  */
 async function displayUserIssues(username, userRepos) {
-  issuesList.innerHTML = "";
+  try {
+    issuesList.innerHTML = "";
 
-  for (const repo of userRepos) {
-    const issues = await fetchUserIssues(username, repo.name);
+    for (const repo of userRepos) {
+      const issues = await fetchUserIssues(username, repo.name);
 
-    if (issues.length > 0) {
-      const repoHeading = document.createElement("h3");
-      repoHeading.textContent = repo.name;
-      issuesList.appendChild(repoHeading);
+      if (issues.length > 0) {
+        const repoHeading = document.createElement("h3");
+        repoHeading.textContent = repo.name;
+        issuesList.appendChild(repoHeading);
 
-      issues.forEach((issue) => {
-        const listItem = document.createElement("li");
-        listItem.innerHTML = `<a href="${issue.html_url}" target="_blank">${issue.title}</a>`;
-        issuesList.appendChild(listItem);
-      });
+        issues.forEach((issue) => {
+          const listItem = document.createElement("li");
+          listItem.innerHTML = `<a href="${issue.html_url}" target="_blank">${issue.title}</a>`;
+          issuesList.appendChild(listItem);
+        });
+      }
     }
-  }
 
-  loadingIndicatorIssues.style.display = "none";
+    loadingIndicatorIssues.style.display = "none";
+  } catch (error) {
+    console.error("Error displaying user issues: ", error);
+    issuesList.textContent = "Failed to display user issues";
+  }
 }
 
 /**
