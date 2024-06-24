@@ -104,6 +104,7 @@ function updatePaginationControls(totalRepos) {
   const prevButton = document.createElement("button");
   prevButton.textContent = "Previous";
   prevButton.disabled = currentPage === 1;
+  prevButton.classList.add("pagination-button");
   prevButton.addEventListener("click", () => {
     if (currentPage > 1) {
       currentPage--;
@@ -119,6 +120,7 @@ function updatePaginationControls(totalRepos) {
   const nextButton = document.createElement("button");
   nextButton.textContent = "Next";
   nextButton.disabled = currentPage === totalPages;
+  nextButton.classList.add("pagination-button");
   nextButton.addEventListener("click", () => {
     if (currentPage < totalPages) {
       currentPage++;
