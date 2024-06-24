@@ -1,8 +1,11 @@
+const perPage = 5;
+let currentPage = 1;
+
 const usernameInput = document.getElementById("username");
 const searchButton = document.getElementById("searchButton");
 const userDetails = document.getElementById("user-details");
-const repositoriesList = document.getElementById("repositories-list");
-const issuesList = document.getElementById("issues-list");
+const repositoriesList = document.getElementById("repositories-list-content");
+const issuesList = document.getElementById("issues-list-content");
 const tabs = document.querySelectorAll(".tab");
 const tabContents = document.querySelectorAll(".tab-content");
 const loadingIndicatorUserDetails = document.getElementById(
@@ -24,7 +27,6 @@ const formatNumber = (num) => {
     return num.toString();
   }
 };
-
 class ApiError extends Error {
   constructor(message) {
     super(message);
@@ -58,7 +60,6 @@ async function fetchUserIssues(username, repo) {
   const response = await fetch(
     `https://api.github.com/repos/${username}/${repo}/issues`
   );
-  // console.log(response);
 
   if (!response.ok) {
     throw new ApiError("Failed to fetch user repo issues");
@@ -68,7 +69,8 @@ async function fetchUserIssues(username, repo) {
 }
 
 function displayUserDetails(userData) {
-  userDetails.innerHTML = `     <p>Username: ${userData.login}</p>
+  userDetails.innerHTML = `
+    <p>Username: ${userData.login}</p>
     <p>Name: ${userData.name || "-"}</p>
     <p>Bio: ${userData.bio || "-"}</p>
     <p>Public Repos: ${userData.public_repos}</p>
@@ -78,25 +80,57 @@ function displayUserDetails(userData) {
 }
 
 function displayUserRepos(userRepos) {
-  // const topFiveRepos = userRepos.slice(0, 5);
-
-  let totalStars = 0;
-  for (const repo of userRepos) {
-    totalStars += repo.stargazers_count;
-  }
-
-  userDetails.innerHTML += `<p>Total Stars: ${formatNumber(totalStars)}</p>`;
-
   repositoriesList.innerHTML = "";
-  userRepos.forEach((repo) => {
+
+  const startIndex = (currentPage - 1) * perPage;
+  const endIndex = startIndex + perPage;
+  const paginatedRepos = userRepos.slice(startIndex, endIndex);
+
+  paginatedRepos.forEach((repo) => {
     const listItem = document.createElement("li");
     listItem.innerHTML = `<a href="${repo.html_url}" target="_blank">${repo.name}</a>`;
     repositoriesList.appendChild(listItem);
   });
+
+  updatePaginationControls(userRepos.length);
+}
+
+function updatePaginationControls(totalRepos) {
+  const totalPages = Math.ceil(totalRepos / perPage);
+
+  const paginationControls = document.getElementById("pagination-controls");
+  paginationControls.innerHTML = "";
+
+  const prevButton = document.createElement("button");
+  prevButton.textContent = "Previous";
+  prevButton.disabled = currentPage === 1;
+  prevButton.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      fetchAndDisplayRepos(usernameInput.value.trim());
+    }
+  });
+  paginationControls.appendChild(prevButton);
+
+  const pageNumber = document.createElement("span");
+  pageNumber.textContent = `Page ${currentPage} of ${totalPages}`;
+  paginationControls.appendChild(pageNumber);
+
+  const nextButton = document.createElement("button");
+  nextButton.textContent = "Next";
+  nextButton.disabled = currentPage === totalPages;
+  nextButton.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      fetchAndDisplayRepos(usernameInput.value.trim());
+    }
+  });
+  paginationControls.appendChild(nextButton);
 }
 
 async function displayUserIssues(username, userRepos) {
   issuesList.innerHTML = "";
+
   for (const repo of userRepos) {
     const issues = await fetchUserIssues(username, repo.name);
 
@@ -112,6 +146,22 @@ async function displayUserIssues(username, userRepos) {
       });
     }
   }
+
+  loadingIndicatorIssues.style.display = "none";
+}
+
+async function fetchAndDisplayRepos(username) {
+  loadingIndicatorRepositories.style.display = "block";
+
+  try {
+    const userRepos = await fetchUserRepos(username);
+    displayUserRepos(userRepos);
+  } catch (error) {
+    console.error("Error fetching user repos: ", error);
+    repositoriesList.textContent = "Failed to fetch user repos";
+  } finally {
+    loadingIndicatorRepositories.style.display = "none";
+  }
 }
 
 const fetchData = async () => {
@@ -124,10 +174,9 @@ const fetchData = async () => {
     return;
   }
 
-  resetContent();
+  loadingIndicatorUserDetails.style.display = "block";
 
   try {
-    loadingIndicatorUserDetails.style.display = "block";
     const userData = await fetchUserData(username);
     displayUserDetails(userData);
 
@@ -143,12 +192,6 @@ const fetchData = async () => {
     loadingIndicatorUserDetails.style.display = "none";
   }
 };
-
-function resetContent() {
-  userDetails.innerHTML = "";
-  repositoriesList.innerHTML = "";
-  issuesList.innerHTML = "";
-}
 
 let repoFetched = false;
 let issueFetched = false;
@@ -167,44 +210,24 @@ tabs.forEach((tab) => {
     switch (tab.dataset.tab) {
       case "repositories-list":
         if (!repoFetched) {
-          loadingIndicatorRepositories.style.display = "block";
+          const username = usernameInput.value.trim();
+          if (username) {
+            currentPage = 1; // Reset current page when switching to repositories tab
+            await fetchAndDisplayRepos(username);
+            repoFetched = true;
+          }
         }
         break;
       case "issues-list":
         if (!issueFetched) {
-          loadingIndicatorRepositories.style.display = "block";
+          const username = usernameInput.value.trim();
+          if (username && userRepos.length > 0) {
+            loadingIndicatorIssues.style.display = "block";
+            await displayUserIssues(username, userRepos);
+            issueFetched = true;
+          }
         }
         break;
-    }
-
-    if (tab.dataset.tab === "repositories-list" && !repoFetched) {
-      const username = usernameInput.value.trim();
-      if (username) {
-        try {
-          userRepos = await fetchUserRepos(username);
-          displayUserRepos(userRepos);
-          repoFetched = true;
-        } catch (error) {
-          console.error("Error fetching user repos: ", error);
-          repositoriesList.textContent = "Failed to fetch user repos";
-        } finally {
-          loadingIndicatorRepositories.style.display = "none";
-        }
-      }
-    }
-    if (tab.dataset.tab === "issues-list" && !issueFetched) {
-      const username = usernameInput.value.trim();
-      if (username && userRepos.length > 0) {
-        try {
-          await displayUserIssues(username, userRepos);
-          issueFetched = true;
-        } catch (error) {
-          console.error("Error fetching user issues: ", error);
-          repositoriesList.textContent = "Failed to fetch user issues";
-        } finally {
-          loadingIndicatorIssues.style.display = "none";
-        }
-      }
     }
   });
 });
