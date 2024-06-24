@@ -1,4 +1,4 @@
-const perPage = 5;
+const perPage = 10;
 let currentPage = 1;
 
 const usernameInput = document.getElementById("username");
