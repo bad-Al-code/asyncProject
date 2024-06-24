@@ -1,6 +1,7 @@
 const perPage = 10;
 let currentPage = 1;
 
+// DOM elements
 const usernameInput = document.getElementById("username");
 const searchButton = document.getElementById("searchButton");
 const userDetails = document.getElementById("user-details");
@@ -9,15 +10,20 @@ const issuesList = document.getElementById("issues-list-content");
 const tabs = document.querySelectorAll(".tab");
 const tabContents = document.querySelectorAll(".tab-content");
 const loadingIndicatorUserDetails = document.getElementById(
-  "loadingIndicatorUserDetails"
+  "loadingIndicatorUserDetails",
 );
 const loadingIndicatorRepositories = document.getElementById(
-  "loadingIndicatorRepositories"
+  "loadingIndicatorRepositories",
 );
 const loadingIndicatorIssues = document.getElementById(
-  "loadingIndicatorIssues"
+  "loadingIndicatorIssues",
 );
 
+/**
+ * Utility function to format large numbers with suffixes (k, M)
+ * @param {number} num - The number to format
+ * @returns {string} The formatted number with suffix
+ */
 const formatNumber = (num) => {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + "M";
@@ -27,13 +33,26 @@ const formatNumber = (num) => {
     return num.toString();
   }
 };
+
+/**
+ * Custom Error class for API-related errors
+ */
 class ApiError extends Error {
+  /**
+   * @param {string} message - The error message
+   */
   constructor(message) {
     super(message);
     this.name = "ApiError";
   }
 }
 
+/**
+ * Fetch user data from GitHub API
+ * @param {string} username - The GitHub username
+ * @returns {Promise<Object>} A promise resolving to the user data object
+ * @throws {ApiError} Throws error if API response is not successful
+ */
 async function fetchUserData(username) {
   const response = await fetch(`https://api.github.com/users/${username}`);
 
@@ -44,9 +63,15 @@ async function fetchUserData(username) {
   return await response.json();
 }
 
+/**
+ * Fetch user repositories from GitHub API
+ * @param {string} username - The GitHub username
+ * @returns {Promise<Array<Object>>} A promise resolving to an array of user repository objects
+ * @throws {ApiError} Throws error if API response is not successful
+ */
 async function fetchUserRepos(username) {
   const response = await fetch(
-    `https://api.github.com/users/${username}/repos`
+    `https://api.github.com/users/${username}/repos`,
   );
 
   if (!response.ok) {
@@ -56,9 +81,16 @@ async function fetchUserRepos(username) {
   return await response.json();
 }
 
+/**
+ * Fetch issues for a specific repository from GitHub API
+ * @param {string} username - The GitHub username
+ * @param {string} repo - The repository name
+ * @returns {Promise<Array<Object>>} A promise resolving to an array of issues objects
+ * @throws {ApiError} Throws error if API response is not successful
+ */
 async function fetchUserIssues(username, repo) {
   const response = await fetch(
-    `https://api.github.com/repos/${username}/${repo}/issues`
+    `https://api.github.com/repos/${username}/${repo}/issues`,
   );
 
   if (!response.ok) {
@@ -68,6 +100,10 @@ async function fetchUserIssues(username, repo) {
   return await response.json();
 }
 
+/**
+ * Display user details in the UI
+ * @param {Object} userData - The user data object fetched from GitHub API
+ */
 function displayUserDetails(userData) {
   userDetails.innerHTML = `
     <p>Username: ${userData.login}</p>
@@ -79,6 +115,10 @@ function displayUserDetails(userData) {
   `;
 }
 
+/**
+ * Display user repositories in the UI
+ * @param {Array<Object>} userRepos - An array of user repository objects
+ */
 function displayUserRepos(userRepos) {
   repositoriesList.innerHTML = "";
 
@@ -95,6 +135,10 @@ function displayUserRepos(userRepos) {
   updatePaginationControls(userRepos.length);
 }
 
+/**
+ * Update pagination controls based on total repositories
+ * @param {number} totalRepos - Total number of user repositories
+ */
 function updatePaginationControls(totalRepos) {
   const totalPages = Math.ceil(totalRepos / perPage);
 
@@ -130,6 +174,11 @@ function updatePaginationControls(totalRepos) {
   paginationControls.appendChild(nextButton);
 }
 
+/**
+ * Display user issues for all repositories in the UI
+ * @param {string} username - The GitHub username
+ * @param {Array<Object>} userRepos - An array of user repository objects
+ */
 async function displayUserIssues(username, userRepos) {
   issuesList.innerHTML = "";
 
@@ -152,6 +201,10 @@ async function displayUserIssues(username, userRepos) {
   loadingIndicatorIssues.style.display = "none";
 }
 
+/**
+ * Fetch and display user repositories
+ * @param {string} username - The GitHub username
+ */
 async function fetchAndDisplayRepos(username) {
   loadingIndicatorRepositories.style.display = "block";
 
@@ -166,6 +219,9 @@ async function fetchAndDisplayRepos(username) {
   }
 }
 
+/**
+ * Fetch user data, repositories, and issues based on input username
+ */
 const fetchData = async () => {
   const username = usernameInput.value.trim();
 
@@ -199,6 +255,9 @@ let repoFetched = false;
 let issueFetched = false;
 let userRepos = [];
 
+/**
+ * Initialize tab click listeners to fetch and display data accordingly
+ */
 tabs.forEach((tab) => {
   tab.addEventListener("click", async () => {
     tabs.forEach((t) => t.classList.remove("active"));
@@ -214,7 +273,7 @@ tabs.forEach((tab) => {
         if (!repoFetched) {
           const username = usernameInput.value.trim();
           if (username) {
-            currentPage = 1; // Reset current page when switching to repositories tab
+            currentPage = 1;
             await fetchAndDisplayRepos(username);
             repoFetched = true;
           }
@@ -234,6 +293,9 @@ tabs.forEach((tab) => {
   });
 });
 
+/**
+ * Handle Enter key press in username input for initiating search
+ */
 usernameInput.addEventListener("keyup", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
@@ -241,4 +303,7 @@ usernameInput.addEventListener("keyup", (event) => {
   }
 });
 
+/**
+ * Handle click on search button to fetch user data, repositories, and issues
+ */
 searchButton.addEventListener("click", fetchData);
