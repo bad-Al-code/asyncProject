@@ -124,6 +124,8 @@ const fetchData = async () => {
     return;
   }
 
+  resetContent();
+
   try {
     loadingIndicatorUserDetails.style.display = "block";
     const userData = await fetchUserData(username);
@@ -141,6 +143,12 @@ const fetchData = async () => {
     loadingIndicatorUserDetails.style.display = "none";
   }
 };
+
+function resetContent() {
+  userDetails.innerHTML = "";
+  repositoriesList.innerHTML = "";
+  issuesList.innerHTML = "";
+}
 
 let repoFetched = false;
 let issueFetched = false;
