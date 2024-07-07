@@ -105,7 +105,9 @@ async function fetchUserIssues(username, repo) {
     );
 
     if (!response.ok) {
-      throw new ApiError("Failed to fetch user repo issues");
+      throw new ApiError(
+        `Failed to fetch issues for ${repo}: ${response.status}`,
+      );
     }
 
     return await response.json();
@@ -206,7 +208,7 @@ function updatePaginationControls(totalRepos) {
  */
 async function displayUserIssues(username, userRepos) {
   try {
-    issuesList.innerHTML = "";
+    issuesList.innerHTML = ""; // Clear previous content
 
     for (const repo of userRepos) {
       const issues = await fetchUserIssues(username, repo.name);
@@ -224,10 +226,11 @@ async function displayUserIssues(username, userRepos) {
       }
     }
 
-    loadingIndicatorIssues.style.display = "none";
+    loadingIndicatorIssues.style.display = "none"; // Hide loading indicator
   } catch (error) {
     console.error("Error displaying user issues: ", error);
-    issuesList.textContent = "Failed to display user issues";
+    issuesList.textContent = "Failed to display user issues"; // Display error message
+    loadingIndicatorIssues.style.display = "none"; // Hide loading indicator on error
   }
 }
 
@@ -236,16 +239,16 @@ async function displayUserIssues(username, userRepos) {
  * @param {string} username - The GitHub username
  */
 async function fetchAndDisplayRepos(username) {
-  loadingIndicatorRepositories.style.display = "block";
+  loadingIndicatorRepositories.style.display = "block"; // Display loading indicator
 
   try {
     const userRepos = await fetchUserRepos(username);
-    displayUserRepos(userRepos);
+    displayUserRepos(userRepos); // Display repositories
   } catch (error) {
     console.error("Error fetching user repos: ", error);
-    repositoriesList.textContent = "Failed to fetch user repos";
+    repositoriesList.textContent = "Failed to fetch user repos"; // Display error message
   } finally {
-    loadingIndicatorRepositories.style.display = "none";
+    loadingIndicatorRepositories.style.display = "none"; // Hide loading indicator
   }
 }
 
@@ -268,9 +271,8 @@ const fetchData = async () => {
     const userData = await fetchUserData(username);
     displayUserDetails(userData);
 
-    repoFetched = false;
-    issueFetched = false;
-    userRepos = [];
+    const userRepos = await fetchUserRepos(username);
+    await displayUserIssues(username, userRepos);
   } catch (error) {
     console.error("Error fetching user data: ", error);
     userDetails.textContent = "Failed to fetch user data";
@@ -280,10 +282,6 @@ const fetchData = async () => {
     loadingIndicatorUserDetails.style.display = "none";
   }
 };
-
-let repoFetched = false;
-let issueFetched = false;
-let userRepos = [];
 
 /**
  * Initialize tab click listeners to fetch and display data accordingly
@@ -300,23 +298,19 @@ tabs.forEach((tab) => {
 
     switch (tab.dataset.tab) {
       case "repositories-list":
-        if (!repoFetched) {
-          const username = usernameInput.value.trim();
-          if (username) {
-            currentPage = 1;
-            await fetchAndDisplayRepos(username);
-            repoFetched = true;
-          }
+        const username = usernameInput.value.trim();
+        if (username) {
+          currentPage = 1;
+          await fetchAndDisplayRepos(username);
         }
         break;
       case "issues-list":
-        if (!issueFetched) {
-          const username = usernameInput.value.trim();
-          if (username && userRepos.length > 0) {
-            loadingIndicatorIssues.style.display = "block";
-            await displayUserIssues(username, userRepos);
-            issueFetched = true;
-          }
+        const usernameIssues = usernameInput.value.trim();
+        if (usernameIssues) {
+          loadingIndicatorIssues.style.display = "block";
+          const userReposIssues = await fetchUserRepos(usernameIssues);
+          await displayUserIssues(usernameIssues, userReposIssues);
+          loadingIndicatorIssues.style.display = "none";
         }
         break;
     }
